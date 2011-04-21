@@ -20,7 +20,6 @@ import java.awt.event._
 import javax.swing.JComponent
 
 import solitarius.general.{ Card, Pile, Sequence, Tableau, Utils }
-import Utils.sum
 
 import CardImages.{ cardImages, backside, cardWidth, cardHeight }
 
@@ -37,7 +36,7 @@ class TableauView(model: Tableau) extends JComponent {
   addMouseListener(myMouseListener)
   addMouseMotionListener(myMouseMotionListener)
   setPreferredSize(new Dimension(marginLeft + marginRight + model.columnCount * (preferredPadding + cardWidth),
-                                 marginTop + marginBottom + sum(preferredRowHeights)))
+                                 marginTop + marginBottom + preferredRowHeights.sum))
   setMinimumSize(getPreferredSize)
   
   def preferredRowHeights = model.rowHeights.map(cards => preferredPadding + cards * cardHeight)
@@ -67,12 +66,12 @@ class TableauView(model: Tableau) extends JComponent {
   private def verticalPadding = {
     val height = getHeight
     val contentHeight = height - marginTop - marginTop
-    val cardHeights = sum(model.rowHeights) * cardHeight
+    val cardHeights = model.rowHeights.sum * cardHeight
     (contentHeight - cardHeights) / (model.rowCount-1)
   }
   
   private def gridCoordinates(x: Int, y: Int) = {
-    val prev = cardHeight * sum(model.rowHeights.take(y))
+    val prev = cardHeight * model.rowHeights.take(y).sum
     (marginLeft + (cardWidth + horizontalPadding) * x, 
      marginTop + prev + (verticalPadding * y))
   }

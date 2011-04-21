@@ -15,45 +15,17 @@
  */
 package solitarius.general
 
-import java.util.Random
+import java.util.{ Arrays, Collections }
 
 object Utils {
-  
-  private val random = new Random
 
-  /** Poor man's profiling */
-  def time[T](name: String) (thunk: => T) {
-    val start = currentTime
-    try {
-      thunk
-    } finally {
-      val total = currentTime - start
-      println(name + ": " + total + "ms")
-    }
-  }
-  
-  def sum(xs: Seq[Int]) = xs.foldLeft(0)(_+_)
-  
-  def currentTime = System.currentTimeMillis
-  
   /** Returns a shuffled array containing elements of given collection */
-  def shuffled[T](items: Collection[T]) (implicit manifest: scala.reflect.ClassManifest[T]): Array[T] = {
+  def shuffled[T](items: Iterable[T]) (implicit manifest: scala.reflect.ClassManifest[T]): Array[T] = {
     val array = items.toArray
-    shuffle(array)
+    Collections.shuffle(Arrays.asList(array))
     array
   }
-  
+
   def replicate[T](count: Int, items: List[T]): List[T] =
-    if (count == 0) Nil else items ::: replicate(count-1, items)
-
-  /** Shuffles given array in-place */
-  def shuffle[T](array: Array[T]) =
-    for (i <- Iterator.range(array.size, 1, -1))
-      swap(array, i - 1, random.nextInt(i))
-
-  private def swap[T](array: Array[T], i: Int, j: Int) = {
-    val tmp = array(i)
-    array(i) = array(j)
-    array(j) = tmp
-  }
+    List.fill(count)(items).flatten
 }
