@@ -1,27 +1,29 @@
 package solitarius.ui
 
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
+import org.jetbrains.skia.Image
 import solitarius.general.Card
 import solitarius.general.Deck
 import solitarius.general.Rank
-import java.awt.Image
-import java.awt.Toolkit
 import java.io.FileNotFoundException
 
 object CardImages {
 
-    const val cardWidth = 71
-    const val cardHeight = 96
-
     val backside = loadImage("/images/jiff/b1fv.png")
 
-    val cardImages: Map<Card, Image> =
+    val cardImages: Map<Card, ImageBitmap> =
         Deck.cards.associateWith { loadImage(it) }
 
-    private fun loadImage(card: Card): Image = loadImage(imageFile(card))
+    private fun loadImage(card: Card): ImageBitmap = loadImage(imageFile(card))
 
-    private fun loadImage(file: String): Image {
+    private fun loadImage(file: String): ImageBitmap {
         val resource = javaClass.getResource(file) ?: throw FileNotFoundException(file)
-        return Toolkit.getDefaultToolkit().createImage(resource)
+
+        return Image.makeFromEncoded(resource.readBytes()).toComposeImageBitmap()
     }
 
     private fun imageFile(card: Card): String {
